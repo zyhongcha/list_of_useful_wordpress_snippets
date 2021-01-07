@@ -183,3 +183,42 @@ define( ‘WP_POST_REVISIONS’, 3 );
 // Automatically delete trashed posts after 30 days (set to 0 for disabling trashed posts)
 define( 'EMPTY_TRASH_DAYS', 30 ); 
 ```
+
+
+
+## WooCommerce additional settings
+
+
+###
+```
+//Disable logging Action Scheduler, REDUCES DB BLOAT 
+add_filter( 'action_scheduler_retention_period', '__return_zero' );
+
+
+//Disable standard Wordpress auto-generated image sizes
+add_filter('intermediate_image_sizes_advanced', 'disable_wp_responsive_image_sizes');
+function disable_wp_responsive_image_sizes($sizes) {
+
+	unset($sizes['large']);
+	unset($sizes['medium_large']);
+	return $sizes;
+}
+
+// Override WooCommerce Thumbnails to 150x150 instead default 100x100px
+add_filter( 'woocommerce_get_image_size_gallery_thumbnail', function( $size ) {
+	return array(
+		'width'  => 150,
+		'height' => 150,
+		'crop'   => 1,
+	);
+} );
+
+
+// Disable pre selecting "ship to different address".
+add_filter( 'woocommerce_ship_to_different_address_checked', '__return_false' );
+
+
+
+
+```
+###

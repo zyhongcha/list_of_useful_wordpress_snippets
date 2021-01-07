@@ -14,6 +14,23 @@ remove_action( 'wp_print_styles', 'print_emoji_styles' );
 remove_action('wp_head', 'rsd_link');
 add_filter( 'xmlrpc_enabled', '__return_false' );
 ```
+#### Disable on server as well:
+Apache Server on .htaccess file:
+```
+<Files xmlrpc.php>
+Order Deny,Allow
+Deny from all
+</Files>
+```
+Nginx Server on nginx.conf:
+```
+server {
+    location = /xmlrpc.php {
+        deny all;
+    }
+}
+```
+
 
 ### Modify all links in Wordpress to be relative instead of absolute, very useful for multilang sites
 ```
@@ -84,6 +101,22 @@ function no_self_ping( &$links ) {
 add_action( 'pre_ping', 'no_self_ping' );
 ```
 
+## Modify Wordpress using PHP
+
+### Reset comment count in a single post after having them deleted manually in database. This code loops through all posts.
+```
+$entries = $wpdb->get_results("SELECT * FROM wp_posts WHERE post_type IN ('post', 'page')");
+
+foreach($entries as $entry)
+{
+    $post_id = $entry->ID;
+    $comment_count = $wpdb->get_var("SELECT COUNT(*) AS comment_cnt FROM wp_comments WHERE comment_post_ID = '$post_id' AND comment_approved = '1'");
+    $wpdb->query("UPDATE wp_posts SET comment_count = '$comment_count' WHERE ID = '$post_id'");
+}
+```
+
+
+
 ## Optional Styles
 
 ### Add custom styles to wp-login.php page
@@ -121,6 +154,14 @@ DELETE a,b,c FROM wp_posts a LEFT JOIN wp_term_relationships b ON (a.ID = b.obje
 LEFT JOIN wp_postmeta c ON (a.ID = c.post_id) WHERE a.post_type = 'revision'
 ```
 
+### Delete orphaned posts in wp_postmeta
+```
+DELETE pm
+FROM wp_postmeta pm
+LEFT JOIN wp_posts wp ON wp.ID = pm.post_id
+WHERE wp.ID IS NULL
+```
+
 ### Delete all trashed posts 
 ```
 DELETE p
@@ -136,6 +177,9 @@ WHERE post_status = 'trash'
 // Deactivate Post Revisions
 define('WP_POST_REVISIONS', false);
 
-// Automatically delete trashed posts after 30 days
+// Save only max. 3 post revisions
+define( ‘WP_POST_REVISIONS’, 3 );
+
+// Automatically delete trashed posts after 30 days (set to 0 for disabling trashed posts)
 define( 'EMPTY_TRASH_DAYS', 30 ); 
 ```

@@ -1,5 +1,5 @@
 # Handy Wordpress Snippets for Developers (WIP)
-
+These are some of wordpress optimizations/ adjustments that I have encountered on my work. Use accordingly to your situation.
 
 
 ## Modify Wordpress in functions.php

@@ -115,7 +115,39 @@ foreach($entries as $entry)
 }
 ```
 
+```
+/* add custom html header field to admin panel*/
 
+add_filter('admin_init', 'my_general_settings_register_fields');
+
+function my_general_settings_register_fields()
+{
+	register_setting('general', 'custom_html', 'esc_attr');
+	add_settings_field('custom_html', '<label for="custom_html">' . __('Scripte im HTML-Head', 'custom_html') . '</label>', 'my_general_custom_html', 'general');
+}
+
+function my_general_custom_html()
+{
+	$custom_html = get_option('custom_html', '');
+	//echo '<input id="custom_html" style="width: 35%;" type="text" name="custom_html" value="' . $custom_html . '" />';
+	echo '<textarea name="custom_html" rows="10" cols="50" id="custom_html" class="large-text code">' . $custom_html . '</textarea>';
+}
+
+
+// Inserting a script in the WordPress head
+
+function my_google_header_code()
+{
+	echo html_entity_decode(get_option('custom_html'), ENT_QUOTES);
+}
+
+add_action('wp_head', 'my_google_header_code');
+
+// END inserting script in WP head
+
+
+/* END add custom html header field to admin panel*/
+```
 
 ## Optional Styles
 
@@ -217,6 +249,21 @@ add_filter( 'woocommerce_get_image_size_gallery_thumbnail', function( $size ) {
 // Disable pre selecting "ship to different address".
 add_filter( 'woocommerce_ship_to_different_address_checked', '__return_false' );
 
+//Disable WooCommerce Bloat
+add_filter( 'woocommerce_admin_disabled', '__return_true' );
+add_filter( 'woocommerce_marketing_menu_items', '__return_empty_array' );
+add_filter( 'woocommerce_helper_suppress_admin_notices', '__return_true' );
+
+
+//Remove "What is paypal" image
+add_filter('woocommerce_gateway_icon', 'remove_what_is_paypal', 10, 2);
+function remove_what_is_paypal($icon_html, $gateway_id)
+{
+	if ('paypal' == $gateway_id) {
+		$icon_html = '<img src="/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.png" alt="PayPal Acceptance Mark">';
+	}
+	return $icon_html;
+}
 
 
 

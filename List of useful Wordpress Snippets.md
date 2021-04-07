@@ -267,5 +267,38 @@ function remove_what_is_paypal($icon_html, $gateway_id)
 
 
 
+// Add feature: Link above change product price field to apply the change to all its variations.
+add_action( 'woocommerce_product_data_panels', 'gowp_global_variation_price' );  
+function gowp_global_variation_price() {  	
+	global $woocommerce;  	?>  		
+	<script type="text/javascript">  			
+	function addVariationLinks() {  				
+		a = jQuery( '<a href="#">Apply change to all variations</a>' );  				
+		b = jQuery( 'input[name^="variable_regular_price"].wc_input_price' );  				
+		a.click( function( c ) {  					
+			d = jQuery( this ).parent( 'label' ).next( 'input[name^="variable_regular_price"].wc_input_price' ).val();
+			e = confirm( "Change price to all variations " + d + "?" );  					
+			if ( e ) b.val( d ).trigger( 'change' );  					
+			c.preventDefault();  				} );  				
+			b.prev( 'label' ).append( " " ).append( a );  				
+			aa = jQuery( '<a href="#">Auf alle Variationen übertragen</a>' );  				
+			bb = jQuery( 'input[name^="variable_sale_price"].wc_input_price' );  				
+			aa.click( function( cc ) {  					
+				dd = jQuery( this ).parent( 'label' ).next( 'input[name^="variable_sale_price"].wc_input_price' ).val();
+				ee = confirm( "Change price to all variations " + dd + "?" );  					
+				if ( ee ) bb.val( dd ).trigger( 'change' );  					
+				cc.preventDefault();  				} );  				
+				bb.prev( 'label' ).append( " " ).append( aa );  			}  			
+				<?php if ( version_compare( $woocommerce->version, '2.4', '>=' ) ) : ?>  				
+				jQuery( document ).ready( function() {  					
+					jQuery( document ).ajaxComplete( function( event, request, settings ) {  						
+						if ( settings.data.lastIndexOf( "action=woocommerce_load_variations", 0 ) === 0 ) {
+						addVariationLinks();  						}  					} );  				} );  			
+						<?php else: ?>  				
+						addVariationLinks();  			
+						<?php endif; ?>  		</script>
+						  	<?php  }
+
+
 ```
 ###

@@ -348,5 +348,60 @@ function gowp_global_variation_price() {
 						  	<?php  }
 
 
+
+
+
+
+// Modify WooCommerce Related Product function by displaying only products from same specific attribute and category //ex. attribute: pa_marke
+function woocommerce_aantal_related( $args ) {
+	$args['posts_per_page'] = 3;
+	$args['columns'] = 3;
+	return $args;
+}
+add_filter( 'woocommerce_output_related_products_args', 'woocommerce_aantal_related' );
+
+function filter_related_products($args){	
+	global $product;
+	$args = array();	
+	$thiscats = wc_get_product_terms( $product->id, 'product_cat', array( 'fields' => 'slugs' ) );
+	$thistypes = wc_get_product_terms( $product->id, 'pa_marke', array( 'fields' => 'slugs' ) );
+	
+	$ids_by_model_attribute = get_posts( array(
+        'post_type' => 'product',
+        'numberposts' => -1,
+        'post_status' => 'publish',
+        'fields' => 'ids',
+		'post__not_in' => array( $product->get_id() ), // exclude current product
+		'tax_query' => array(
+			'relation' => 'AND',
+				array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'slug',
+					'terms'    => $cats,
+					'operator' => 'AND'
+				),
+			array(
+				'taxonomy' => 'pa_marke',
+				'field'    => 'slug',
+				'terms'    => $thistypes,
+				'operator' => 'AND'
+			)
+		)
+   ) );
+	
+	if($ids_by_model_attribute){
+		foreach($ids_by_model_attribute as $product_id){
+			$cats = wc_get_product_terms( $product_id, 'product_cat', array( 'fields' => 'slugs' ) );
+			$types = wc_get_product_terms( $product_id, 'pa_marke', array( 'fields' => 'slugs' ) );
+			if($cats == $thiscats && $thistypes == $types){
+				array_push($args,$product_id);
+			}
+		}
+	}
+	
+	return $args;
+}
+add_filter('woocommerce_related_products','filter_related_products');
+
 ```
 ###

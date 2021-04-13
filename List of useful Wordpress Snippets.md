@@ -403,5 +403,37 @@ function filter_related_products($args){
 }
 add_filter('woocommerce_related_products','filter_related_products');
 
+
+
+
+/**
+ * Hide shipping rates when free shipping is available.
+ * Updated to support WooCommerce 2.6 Shipping Zones.
+ *
+ * @param array $rates Array of rates found for the package.
+ * @return array
+ */
+function my_hide_shipping_when_free_is_available( $rates ) {
+	$free = array();
+
+	foreach ( $rates as $rate_id => $rate ) {
+		if ( 'free_shipping' === $rate->method_id ) {
+			$free[ $rate_id ] = $rate;
+			break;
+		}
+	}
+
+	return ! empty( $free ) ? $free : $rates;
+}
+
+
+// Change "SALE" Label on Product Gallery Page
+add_filter('woocommerce_sale_flash', 'woocommerce_custom_sale_text', 10, 3);
+function woocommerce_custom_sale_text($text, $post, $_product)
+{
+    return '<span class="onsale">SALE</span>';
+}
+
+
 ```
 ###

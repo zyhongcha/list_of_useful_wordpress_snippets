@@ -371,7 +371,7 @@ function filter_related_products($args){
         'numberposts' => -1,
         'post_status' => 'publish',
         'fields' => 'ids',
-		'post__not_in' => array( $product->get_id() ), // exclude current product
+		'post__not_in' => array( $product->id ), // exclude current product
 		'tax_query' => array(
 			'relation' => 'AND',
 				array(

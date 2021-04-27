@@ -75,6 +75,12 @@ return $fields;
 }
 ```
 
+### Disable providing Wordpress Post RSS Comments into header
+```
+// Add default posts and comments RSS feed links to head.
+add_theme_support( 'automatic-feed-links' );
+```
+
 
 ### Add language hreftags in HTML head for multilang sites (do not forget to add canonical link as well if you use this)
 ```

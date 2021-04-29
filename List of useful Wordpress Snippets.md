@@ -82,6 +82,8 @@ add_theme_support( 'automatic-feed-links' );
 ```
 
 
+
+
 ### Add language hreftags in HTML head for multilang sites (do not forget to add canonical link as well if you use this)
 ```
 // Add Language Tags depending on current domain
@@ -107,7 +109,20 @@ function no_self_ping( &$links ) {
 add_action( 'pre_ping', 'no_self_ping' );
 ```
 
+### Modify Wordpress API
+```
+// Include Featured Image to the Wordpress API JSON Response with thumbnail
+function get_rest_featured_image( $object, $field_name, $request ) {
+    if( $object['featured_media'] ){
+        $img = wp_get_attachment_image_src( $object['featured_media'], 'thumbnail' );
+        return $img[0];
+    }
+    return false;
+}
+
+
 ## Modify Wordpress using PHP
+
 
 ### Reset comment count in a single post after having them deleted manually in database. This code loops through all posts.
 ```

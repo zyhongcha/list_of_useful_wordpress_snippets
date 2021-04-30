@@ -31,6 +31,15 @@ server {
 }
 ```
 
+### Change Gravatar to custom author image field
+```
+add_filter('get_avatar_url', 'grabAuthorImage');
+function grabAuthorImage() {
+	$author_image_id = get_the_author_meta("myprefix_image_id");
+	$image_link = wp_get_attachment_image_src($author_image_id, 'thumbnail')[0];
+	return $image_link;
+}
+```
 
 ### Modify all links in Wordpress to be relative instead of absolute, very useful for multilang sites
 ```

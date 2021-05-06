@@ -128,8 +128,45 @@ function get_rest_featured_image( $object, $field_name, $request ) {
     }
     return false;
 }
+```
+
+### Change default comment box strings
+```
+function set_my_comment_title( $defaults ){
+	$defaults['id_submit'] = 'submit-comment';
+	$defaults['title_reply'] = 'Du hast eine Frage oder eine Meinung zum Artikel? Teile sie mit uns!';
+	$defaults['comment_field'] = '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun' ) . '</label><br /><textarea id="comment" name="comment"  required aria-required="true"></textarea></p>';
+	
+	return $defaults;
+
+};
+add_filter('comment_form_defaults', 'set_my_comment_title', 10);
+
+function prefix_move_comment_field_to_bottom( $fields ) {
+ 
+    $comment_field = $fields['comment'];
+    unset( $fields['comment'] );
+    $fields['comment'] = $comment_field;
+    return $fields;
+ 
+}
+add_filter( 'comment_form_fields',      'prefix_move_comment_field_to_bottom', 10, 1 );
+
+function filter_comment_form_submit_button( $submit_button, $args ) {
+    $submit_button = '<input name="submit" type="submit" id="submit" class="submit" value="Kommentar absenden">';
+		//Remove novalidate attribute in comment form
+	if( is_singular() ) : ?>
+    <script type="text/javascript">
+        var commentForm = document.getElementById('commentform');
+        commentForm.removeAttribute('novalidate');
+    </script>
+	<?php endif;
+    return $submit_button;
+};
+add_filter( 'comment_form_submit_button', 'filter_comment_form_submit_button', 10, 2 );
 
 
+```
 ## Modify Wordpress using PHP
 
 

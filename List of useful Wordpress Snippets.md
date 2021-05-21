@@ -91,6 +91,17 @@ add_theme_support( 'automatic-feed-links' );
 ```
 
 
+### Reset Comment Count after WP migration
+```
+$entries = $wpdb->get_results("SELECT * FROM wp_posts WHERE post_type IN ('post', 'page')");
+
+foreach($entries as $entry)
+{
+    $post_id = $entry->ID;
+    $comment_count = $wpdb->get_var("SELECT COUNT(*) AS comment_cnt FROM wp_comments WHERE comment_post_ID = '$post_id' AND comment_approved = '1'");
+    $wpdb->query("UPDATE wp_posts SET comment_count = '$comment_count' WHERE ID = '$post_id'");
+}
+```
 
 
 ### Add language hreftags in HTML head for multilang sites (do not forget to add canonical link as well if you use this)

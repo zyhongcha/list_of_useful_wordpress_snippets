@@ -352,6 +352,16 @@ define( 'EMPTY_TRASH_DAYS', 30 );
 //Disable logging Action Scheduler, REDUCES DB BLOAT 
 add_filter( 'action_scheduler_retention_period', '__return_zero' );
 
+// Hide password protected posts in Wordpress incl. Woocommerce products
+function wpb_password_post_filter( $where = '' ) {
+    if (!is_single() && !is_admin()) {
+        $where .= " AND post_password = ''";
+    }
+    return $where;
+}
+add_filter( 'posts_where', 'wpb_password_post_filter' );
+
+
 
 //Disable standard Wordpress auto-generated image sizes
 add_filter('intermediate_image_sizes_advanced', 'disable_wp_responsive_image_sizes');

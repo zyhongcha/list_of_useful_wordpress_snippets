@@ -6,8 +6,10 @@ These are some of wordpress optimizations/ adjustments that I have encountered o
 
 
 ### Remove emojis that are loaded on default 
+```
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
+```
 
 ### Deactivate xmlrpc.php for security reasons (note: server-side configuration is also recommended)
 ```
@@ -29,6 +31,15 @@ server {
         deny all;
     }
 }
+```
+### Enable svg upload on media
+```
+function kb_svg ( $svg_mime ){
+	$svg_mime['svg'] = 'image/svg+xml';
+	return $svg_mime;
+}
+
+add_filter( 'upload_mimes', 'kb_svg' );
 ```
 
 ### Change Gravatar to custom author image field

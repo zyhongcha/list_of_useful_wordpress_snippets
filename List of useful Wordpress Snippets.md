@@ -95,6 +95,24 @@ return $fields;
 }
 ```
 
+### Fix WPmail default return path
+wpmail() sets the return path wrong as default, to set the path reflect the actual mail address, put this in functions.php
+```
+// Fix Return Path in Mail Settings
+class email_return_path {
+	function __construct() {
+   add_action( 'phpmailer_init', array( $this, 'fix' ) );   
+	}
+ 
+ function fix( $phpmailer ) {
+	 $phpmailer->Sender = $phpmailer->From;
+ }
+ }
+ 
+ new email_return_path();
+```
+
+
 ### Disable providing Wordpress Post RSS Comments into header
 ```
 // Add default posts and comments RSS feed links to head.
